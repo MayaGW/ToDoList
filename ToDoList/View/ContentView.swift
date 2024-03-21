@@ -11,6 +11,8 @@ import CoreData
 struct ContentView: View {
     
     @State private var showingAddTodoView: Bool = false
+    @State private var animatingButton: Bool = false
+    @State private var showingSettingsView: Bool = false
 
  
     @FetchRequest(entity: Todo.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Todo.name, ascending: true)]) var todos: FetchedResults<Todo>
@@ -42,12 +44,13 @@ struct ContentView: View {
                     
                     trailing:
                  Button(action: {
-                    self.showingAddTodoView.toggle()
+                    self.showingSettingsView.toggle()
                 }, label: {
-                 Image(systemName: "plus")
+                 Image(systemName: "paintbrush")
+                        .imageScale(.large)
                            })//:ADD BUTTON
-                    .sheet(isPresented: $showingAddTodoView, content: {
-                        AddToDoView().environment(\.managedObjectContext,self.viewContext)
+                    .sheet(isPresented:$showingSettingsView, content: {
+                        SettingsView().environment(\.managedObjectContext,self.viewContext)
                     })
             )
                 //MARK: - NOTOITEMS
@@ -57,6 +60,39 @@ struct ContentView: View {
                 
                 
             }//Zstack
+            .overlay(
+                ZStack{
+                    Group{
+                        Circle()
+                            .fill(Color.blue)
+                            .opacity(animatingButton ? 0.2 : 0)
+                            .scaleEffect(animatingButton ? 1 : 0)
+                            .frame(width: 68, height: 58, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                        Circle()
+                            .fill(Color.blue)
+                            .opacity(animatingButton ? 0.15 : 0)
+                            .scaleEffect(animatingButton ? 1 : 0)
+                            .frame(width: 88, height: 88, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                    }
+                    .animation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true))
+                    
+                Button(action: {
+                    self.showingAddTodoView.toggle()
+                }, label: {
+                    Image(systemName: "plus.circle.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .background(Circle().fill(Color.colorBAse))
+                        .frame(width: 40, height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                })//:BUTTON
+                .onAppear(perform: {
+                    animatingButton.toggle()
+                })
+                }//Zstack
+                    .padding(.bottom,15)
+                    .padding(.trailing,15)
+                ,alignment: .bottomTrailing
+            )//overlay
         }//NAVIGATION
     }
     
