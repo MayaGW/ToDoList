@@ -13,7 +13,7 @@ struct ContentView: View {
     @State private var showingAddTodoView: Bool = false
     @State private var animatingButton: Bool = false
     @State private var showingSettingsView: Bool = false
-
+    @EnvironmentObject var iconSettings: IconNames
  
     @FetchRequest(entity: Todo.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Todo.name, ascending: true)]) var todos: FetchedResults<Todo>
  
@@ -50,7 +50,7 @@ struct ContentView: View {
                         .imageScale(.large)
                            })//:ADD BUTTON
                     .sheet(isPresented:$showingSettingsView, content: {
-                        SettingsView().environment(\.managedObjectContext,self.viewContext)
+                        SettingsView().environmentObject(self.iconSettings)
                     })
             )
                 //MARK: - NOTOITEMS

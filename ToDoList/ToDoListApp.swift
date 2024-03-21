@@ -15,6 +15,7 @@ struct ToDoListApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(IconNames())
         }
     }
 }

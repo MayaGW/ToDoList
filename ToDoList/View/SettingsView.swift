@@ -10,14 +10,54 @@ import SwiftUI
 struct SettingsView: View {
     //MARK: - Properties
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var iconSettings: IconNames
+    //THEME
+    let themes: [Theme] = themeData
+    //
+   //@ObservedObject var theme = ThemeSettings()
+    @ObservedObject var theme = ThemeSettings.shared
     //MARK: - Body
     var body: some View {
         NavigationView {
             VStack(alignment:.center, spacing: 0){
                 //MARK: - FORM
                 Form{
+                    //MARK: - SECTION 1
+                    Section(header: Text("Choose the app icon")) {
+                        Picker(selection: $iconSettings.currentIndex,  label: Text("App Icon")){}
+                    }
+                    .padding(.vertical, 3)
+                    //MARK: - SECTION 2
+                    Section(header: 
+                                HStack {
+                        
+                        Text("Choose the app theme")
+                        Image(systemName: "circle.fill")
+                            .resizable()
+                            .frame(width: 10, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .foregroundColor(themes[self.theme.themeSettings].themeColor)
+                    }
                     
-                    
+                    ) {
+                        List{
+                            ForEach(themes, id:\.id){ item in
+                                Button(action: {
+                                    self.theme.themeSettings = item.id
+                                    UserDefaults.standard.set(self.theme.themeSettings, forKey: "Theme")
+                                }, label: {
+                                    HStack {
+                                        Image(systemName: "circle.fill")
+                                            .foregroundColor(item.themeColor)
+                                        Text(item.themeName)
+                                    }
+                                }).accentColor(.primary)
+                                
+                          
+                            }
+                           
+                        }
+                    }//Section2
+                    .padding(.vertical, 3)
                     //MARK: - Section 3
                     Section(header: Text("Follow us on social media")) {
                       FormRowLinkView(icon: "globe", color: Color.pink, text: "Website", link: "https://swiftuimasterclass.com")
@@ -67,4 +107,5 @@ struct SettingsView: View {
 //MARK: -  Preview
 #Preview {
     SettingsView()
+        .environmentObject(IconNames())
 }
